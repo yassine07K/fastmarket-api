@@ -7,29 +7,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/utilisateurs")
-@CrossOrigin(origins = "*") // pour autoriser les appels frontend
+@CrossOrigin(origins = "*")
 public class UtilisateurController {
 
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
-    // GET /utilisateurs
-    @GetMapping
-    public List<Utilisateur> getAllUtilisateurs() {
-        return utilisateurRepository.findAll();
-    }
-
-    // POST /utilisateurs/login
     @PostMapping("/login")
-    public ResponseEntity<Utilisateur> login(@RequestBody Utilisateur user) {
-        return utilisateurRepository.findByEmailAndMotDePasse(
-                        user.getEmail(),
-                        user.getMotDePasse()
-                ).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    public ResponseEntity<?> login(@RequestBody Utilisateur request) {
+        Optional<Utilisateur> optUser = utilisateurRepository.findByEmailAndMotDePasse(
+                request.getEmail(),
+                request.getMotDePasse()
+        );
+
+        if (optUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .build();
+        }
+
+        return ResponseEntity.ok(optUser.get()); // Renvoie tout l'objet utilisateur
     }
 }

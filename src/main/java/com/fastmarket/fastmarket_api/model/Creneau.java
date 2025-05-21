@@ -26,7 +26,9 @@ public class Creneau {
     @Column(name = "heure_fin")
     private String heureFin;
 
-    @OneToMany(mappedBy = "creneau")
+    @ManyToMany(mappedBy = "creneaux", cascade = CascadeType.ALL)
     private List<Magasin> magasins;
+
+
 
 }

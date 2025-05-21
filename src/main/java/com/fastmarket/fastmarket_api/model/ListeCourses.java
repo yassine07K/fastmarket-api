@@ -27,7 +27,13 @@ public class ListeCourses {
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToMany(mappedBy = "liste", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
+    @JoinTable(
+            name = "Liste_Courses_Produit",
+            joinColumns = @JoinColumn(name = "liste_id"),
+            inverseJoinColumns = @JoinColumn(name = "produit_id")
+    )
     private List<Produit> produits;
+
 
 }

@@ -28,7 +28,13 @@ public class Magasin {
     @JoinColumn(name = "Gerant_id")
     private Gerant gerant;
 
-    @OneToMany(mappedBy = "creneau")
+    @ManyToMany
+    @JoinTable(
+            name = "magasins",
+            joinColumns = @JoinColumn(name = "magasin_id"),
+            inverseJoinColumns = @JoinColumn(name = "creneau_id")
+    )
     private List<Creneau> creneaux;
+
 
 }

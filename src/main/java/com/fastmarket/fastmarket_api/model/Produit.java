@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "Produit")
 @Getter
@@ -56,5 +58,9 @@ public class Produit {
     @ManyToOne
     @JoinColumn(name = "magasin_id")
     private Magasin magasin;
+
+    @ManyToMany(mappedBy = "produits")
+    private List<ListeCourses> listesCourses;
+
 
 }

@@ -6,18 +6,27 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
+
 @Entity
-@Table(name = "Categorie")
+@Table(name = "Creneau")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Categorie {
+public class Creneau {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String nom;
+    @Column(name = "heure_debut")
+    private String heureDebut;
+
+    @Column(name = "heure_fin")
+    private String heureFin;
+
+    @OneToMany(mappedBy = "creneau")
+    private List<Magasin> magasins;
+
 }

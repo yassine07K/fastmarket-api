@@ -1,10 +1,17 @@
 package com.fastmarket.fastmarket_api.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "Produit")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Produit {
 
     @Id
@@ -36,7 +43,9 @@ public class Produit {
     @Column(name = "image")
     private String image;
 
-    @Lob
+    @Column(name = "marque")
+    private String marque;
+
     @Column(name = "description")
     private String description;
 
@@ -47,4 +56,5 @@ public class Produit {
     @ManyToOne
     @JoinColumn(name = "magasin_id")
     private Magasin magasin;
+
 }

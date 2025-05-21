@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "Categorie")
+@Table(name = "Gerant")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Categorie {
+public class Gerant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +20,13 @@ public class Categorie {
 
     @Column(nullable = false)
     private String nom;
+
+    @Column(nullable = false, unique = true)
+    private String email;
+
+    @Column(name = "mot_de_passe", nullable = false)
+    private String motDePasse;
+
+    @Column(name = "adresse")
+    private String adresse;
 }

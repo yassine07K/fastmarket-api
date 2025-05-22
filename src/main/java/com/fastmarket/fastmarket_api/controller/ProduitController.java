@@ -1,11 +1,13 @@
 package com.fastmarket.fastmarket_api.controller;
 
+import com.fastmarket.fastmarket_api.dto.ProduitParCategorieDTO;
 import com.fastmarket.fastmarket_api.model.Produit;
 import com.fastmarket.fastmarket_api.repository.ProduitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/produits")
@@ -24,4 +26,11 @@ public class ProduitController {
     public Produit create(@RequestBody Produit produit) {
         return produitRepository.save(produit);
     }
+
+    @GetMapping("/categorie/{id}")
+    public List<Produit> getProduitsByCategorie(@PathVariable Long id) {
+        return produitRepository.findByCategorieId(id);
+    }
+
+
 }

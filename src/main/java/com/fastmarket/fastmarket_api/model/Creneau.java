@@ -1,5 +1,6 @@
 package com.fastmarket.fastmarket_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +27,8 @@ public class Creneau {
     @Column(name = "heure_fin")
     private String heureFin;
 
-    @ManyToMany(mappedBy = "creneaux", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "creneaux")
+    @JsonIgnore
     private List<Magasin> magasins;
 
 

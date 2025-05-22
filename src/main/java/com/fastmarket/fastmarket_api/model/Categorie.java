@@ -1,10 +1,13 @@
 package com.fastmarket.fastmarket_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Categorie")
@@ -20,4 +23,9 @@ public class Categorie {
 
     @Column(nullable = false)
     private String nom;
+
+    @OneToMany(mappedBy = "categorie")
+    @JsonIgnore // éviter les boucles infinies JSON
+    private List<Produit> produits;
+
 }

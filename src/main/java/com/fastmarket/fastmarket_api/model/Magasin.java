@@ -1,5 +1,6 @@
 package com.fastmarket.fastmarket_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,11 +31,16 @@ public class Magasin {
 
     @ManyToMany
     @JoinTable(
-            name = "magasins",
+            name = "creneau_mag", // ✅ vrai nom de la table de jointure
             joinColumns = @JoinColumn(name = "magasin_id"),
             inverseJoinColumns = @JoinColumn(name = "creneau_id")
     )
     private List<Creneau> creneaux;
+
+    @OneToMany(mappedBy = "magasin")
+    @JsonIgnore
+    private List<Produit> produits;
+
 
 
 }

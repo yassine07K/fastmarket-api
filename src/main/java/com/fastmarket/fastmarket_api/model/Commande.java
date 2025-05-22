@@ -1,5 +1,6 @@
 package com.fastmarket.fastmarket_api.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,5 +45,7 @@ public class Commande {
     private String statut = "Panier";
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<LigneCommande> lignesCommande;
+
 }

@@ -59,8 +59,5 @@ public class Produit {
     @JoinColumn(name = "magasin_id")
     private Magasin magasin;
 
-    @ManyToMany(mappedBy = "produits")
-    private List<ListeCourses> listesCourses;
-
 
 }

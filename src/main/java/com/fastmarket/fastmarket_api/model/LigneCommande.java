@@ -1,5 +1,6 @@
 package com.fastmarket.fastmarket_api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,13 +20,15 @@ public class LigneCommande {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "commande_id")
-    private Commande commande;
-
-    @ManyToOne
     @JoinColumn(name = "produit_id")
     private Produit produit;
 
     @Column(name = "quantite")
     private Integer quantite;
+
+    @ManyToOne
+    @JoinColumn(name = "commande_id")
+    @JsonBackReference
+    private Commande commande;
+
 }

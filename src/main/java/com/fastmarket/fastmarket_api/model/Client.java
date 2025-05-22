@@ -1,10 +1,13 @@
 package com.fastmarket.fastmarket_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Client")
@@ -29,4 +32,14 @@ public class Client {
 
     @Column(name = "adresse")
     private String adresse;
+
+    @OneToMany(mappedBy = "client")
+    @JsonIgnore
+    private List<Commande> commandes;
+
+    @OneToMany(mappedBy = "client")
+    @JsonIgnore
+    private List<ListeCourses> courses;
+
+
 }

@@ -1,5 +1,6 @@
 package com.fastmarket.fastmarket_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,6 +36,11 @@ public class Magasin {
             inverseJoinColumns = @JoinColumn(name = "creneau_id")
     )
     private List<Creneau> creneaux;
+
+    @OneToMany(mappedBy = "magasin")
+    @JsonIgnore
+    private List<Produit> produits;
+
 
 
 }

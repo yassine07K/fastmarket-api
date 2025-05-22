@@ -33,7 +33,7 @@ public class ListeCourses {
             joinColumns = @JoinColumn(name = "liste_id"),
             inverseJoinColumns = @JoinColumn(name = "produit_id")
     )
-    private List<Produit> produits;
+    private List<Produit> courses;
 
 
 }

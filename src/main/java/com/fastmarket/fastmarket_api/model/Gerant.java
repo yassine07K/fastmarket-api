@@ -1,10 +1,13 @@
 package com.fastmarket.fastmarket_api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Gerant")
@@ -29,4 +32,9 @@ public class Gerant {
 
     @Column(name = "adresse")
     private String adresse;
+
+    @OneToMany(mappedBy = "gerant")
+    @JsonIgnore // ← si tu veux éviter les cycles JSON dans les réponses API
+    private List<Magasin> magasins;
+
 }

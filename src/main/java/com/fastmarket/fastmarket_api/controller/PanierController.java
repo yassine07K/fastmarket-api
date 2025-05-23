@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -58,4 +59,21 @@ public class PanierController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    /**
+     * Valider le panier actif d'un client
+     */
+    @PutMapping("/valider/{clientId}")
+    public ResponseEntity<?> validerPanier(@PathVariable Long clientId) {
+        return commandeRepository.findByClient_IdAndStatut(clientId, "Panier")
+                .map(panier -> {
+                    panier.setStatut("Commandé");
+                    panier.setDateCommande(LocalDateTime.now());
+                    commandeRepository.save(panier);
+                    return ResponseEntity.ok().build();
+                })
+                .orElse(ResponseEntity.status(404).build());
+    }
+
+
 }

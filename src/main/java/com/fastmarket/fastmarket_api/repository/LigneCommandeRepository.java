@@ -1,5 +1,6 @@
 package com.fastmarket.fastmarket_api.repository;
 
+
 import com.fastmarket.fastmarket_api.model.LigneCommande;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -18,4 +19,5 @@ public interface LigneCommandeRepository extends JpaRepository<LigneCommande, Lo
 
     // ❌ Supprimer toutes les lignes d'une commande
     void deleteByCommande_Id(Long commandeId);
+
 }

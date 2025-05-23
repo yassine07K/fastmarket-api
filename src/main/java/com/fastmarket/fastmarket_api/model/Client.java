@@ -33,6 +33,7 @@ public class Client {
     @Column(name = "adresse")
     private String adresse;
 
+
     @OneToMany(mappedBy = "client")
     @JsonIgnore
     private List<Commande> commandes;
@@ -40,6 +41,11 @@ public class Client {
     @OneToMany(mappedBy = "client")
     @JsonIgnore
     private List<ListeCourses> courses;
+
+    @ManyToOne
+    @JoinColumn(name = "magasin_id")
+    private Magasin magasin;
+
 
 
 }

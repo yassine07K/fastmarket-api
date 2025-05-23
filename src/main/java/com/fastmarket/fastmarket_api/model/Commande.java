@@ -52,10 +52,10 @@ public class Commande {
     @Column(name = "date_commande")
     private LocalDateTime dateCommande;
 
-    @Column(name = "statut", length = 20)
+    @Column(name = "statut")
     private String statut = "Panier";
 
     @OneToMany(mappedBy = "commande", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<LigneCommande> lignesCommande = new ArrayList<>();
+    private List<LigneCommande> lignesCommande;
 }

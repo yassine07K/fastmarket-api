@@ -8,5 +8,5 @@ import lombok.Setter;
 public class AjouterAuPanierRequest {
     private Long clientId;
     private Long produitId;
-    private Integer quantite;
+    private int quantite;
 }

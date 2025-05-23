@@ -21,4 +21,10 @@ public class MagasinController {
     public List<Magasin> getAllMagasins() {
         return magasinRepository.findAll();
     }
+
+    @GetMapping("/top5")
+    public List<Magasin> getTop5Magasins() {
+        return magasinRepository.findTop5ByOrderByIdAsc();
+    }
+
 }

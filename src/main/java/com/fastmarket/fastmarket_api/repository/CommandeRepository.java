@@ -1,13 +1,24 @@
 package com.fastmarket.fastmarket_api.repository;
 
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.fastmarket.fastmarket_api.model.Commande;
+import com.fastmarket.fastmarket_api.model.Client;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
+import java.util.List;
+import java.util.Optional;
+
 public interface CommandeRepository extends JpaRepository<Commande, Long> {
-    Optional<Commande> findByClientIdAndStatut(Long clientId, String statut);
+
+    // ✅ Panier actif d’un client (statut = "Panier")
+    Optional<Commande> findByClient_IdAndStatut(Long clientId, String statut);
+
+    // ✅ Toutes les commandes passées d’un client (hors panier)
+    List<Commande> findByClient_IdAndStatutNot(Long clientId, String statut);
+
+    // ✅ Tous les paniers existants (utile pour admin ou tests)
+    List<Commande> findByStatut(String statut);
+
+    // ✅ Toutes les commandes d’un client, quel que soit le statut
+    List<Commande> findByClient_Id(Long clientId);
 }

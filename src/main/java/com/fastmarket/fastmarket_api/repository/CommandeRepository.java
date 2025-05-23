@@ -21,4 +21,6 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
 
     // ✅ Toutes les commandes d’un client, quel que soit le statut
     List<Commande> findByClient_Id(Long clientId);
+
+    int countByCreneau_Id(Long creneauId);
 }

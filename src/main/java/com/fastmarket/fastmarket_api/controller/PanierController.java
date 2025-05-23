@@ -1,15 +1,11 @@
 package com.fastmarket.fastmarket_api.controller;
 
 import com.fastmarket.fastmarket_api.dto.AjouterAuPanierRequest;
-import com.fastmarket.fastmarket_api.model.Client;
-import com.fastmarket.fastmarket_api.model.Commande;
-import com.fastmarket.fastmarket_api.model.LigneCommande;
-import com.fastmarket.fastmarket_api.model.Produit;
-import com.fastmarket.fastmarket_api.repository.ClientRepository;
-import com.fastmarket.fastmarket_api.repository.CommandeRepository;
-import com.fastmarket.fastmarket_api.repository.LigneCommandeRepository;
-import com.fastmarket.fastmarket_api.repository.ProduitRepository;
+import com.fastmarket.fastmarket_api.dto.ValiderPanierRequest;
+import com.fastmarket.fastmarket_api.model.*;
+import com.fastmarket.fastmarket_api.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +29,12 @@ public class PanierController {
 
     @Autowired
     private ProduitRepository produitRepository;
+
+    @Autowired
+    private MagasinRepository magasinRepository;
+
+    @Autowired
+    private CreneauRepository creneauRepository;
 
     /**
      * Visualiser le panier actif d’un client
@@ -86,6 +88,34 @@ public class PanierController {
                 })
                 .orElse(ResponseEntity.status(404).build());
     }
+
+    @PutMapping("/valider")
+    public ResponseEntity<String> validerPanier(@RequestBody ValiderPanierRequest req) {
+        Optional<Commande> panierOpt = commandeRepository.findByClient_IdAndStatut(req.getClientId(), "Panier");
+
+        if (panierOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        Commande panier = panierOpt.get();
+
+        // On récupère les entités
+        Magasin magasin = magasinRepository.findById(req.getMagasinId())
+                .orElseThrow(() -> new RuntimeException("Magasin introuvable"));
+
+        Creneau creneau = creneauRepository.findById(req.getCreneauId())
+                .orElseThrow(() -> new RuntimeException("Créneau introuvable"));
+
+        // Mise à jour du panier
+        panier.setStatut("Commandé");
+        panier.setMagasin(magasin);
+        panier.setCreneau(creneau);
+
+        commandeRepository.save(panier);
+
+        return ResponseEntity.ok("Commande validée avec succès !");
+    }
+
 
     @PostMapping("/ajouter")
     public ResponseEntity<Commande> ajouterProduitAuPanier(@RequestBody AjouterAuPanierRequest req) {

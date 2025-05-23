@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -16,6 +17,11 @@ public class UtilisateurController {
 
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+
+    @GetMapping
+    public List<Utilisateur> getAllUtilisateurs() {
+        return utilisateurRepository.findAll();
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Utilisateur request) {

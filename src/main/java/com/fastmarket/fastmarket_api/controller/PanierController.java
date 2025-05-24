@@ -83,17 +83,6 @@ public class PanierController {
     /**
      * Valider le panier actif d'un client
      */
-    @PutMapping("/valider/{clientId}")
-    public ResponseEntity<?> validerPanier(@PathVariable Long clientId) {
-        return commandeRepository.findByClient_IdAndStatut(clientId, "Panier")
-                .map(panier -> {
-                    panier.setStatut("Commandé");
-                    panier.setDateCommande(LocalDateTime.now());
-                    commandeRepository.save(panier);
-                    return ResponseEntity.ok().build();
-                })
-                .orElse(ResponseEntity.status(404).build());
-    }
 
     @PutMapping("/valider")
     public ResponseEntity<?> validerPanierAvecPdf(@RequestBody ValiderPanierRequest req) {

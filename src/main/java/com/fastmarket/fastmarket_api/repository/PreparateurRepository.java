@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface PreparateurRepository extends JpaRepository<Preparateur, Long> {
     Optional<Preparateur> findByNom(String nom);
+    Optional<Preparateur> findByEmail(String email);
 }

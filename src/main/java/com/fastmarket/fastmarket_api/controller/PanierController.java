@@ -4,11 +4,16 @@ import com.fastmarket.fastmarket_api.dto.AjouterAuPanierRequest;
 import com.fastmarket.fastmarket_api.dto.ValiderPanierRequest;
 import com.fastmarket.fastmarket_api.model.*;
 import com.fastmarket.fastmarket_api.repository.*;
+import com.fastmarket.fastmarket_api.utils.PdfGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -35,6 +40,7 @@ public class PanierController {
 
     @Autowired
     private CreneauRepository creneauRepository;
+
 
     /**
      * Visualiser le panier actif d’un client
@@ -90,30 +96,37 @@ public class PanierController {
     }
 
     @PutMapping("/valider")
-    public ResponseEntity<String> validerPanier(@RequestBody ValiderPanierRequest req) {
+    public ResponseEntity<?> validerPanierAvecPdf(@RequestBody ValiderPanierRequest req) {
         Optional<Commande> panierOpt = commandeRepository.findByClient_IdAndStatut(req.getClientId(), "Panier");
 
         if (panierOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Aucun panier trouvé.");
         }
 
         Commande panier = panierOpt.get();
 
-        // On récupère les entités
         Magasin magasin = magasinRepository.findById(req.getMagasinId())
                 .orElseThrow(() -> new RuntimeException("Magasin introuvable"));
 
         Creneau creneau = creneauRepository.findById(req.getCreneauId())
                 .orElseThrow(() -> new RuntimeException("Créneau introuvable"));
 
-        // Mise à jour du panier
         panier.setStatut("Commandé");
         panier.setMagasin(magasin);
         panier.setCreneau(creneau);
-
+        panier.setDateCommande(LocalDateTime.now());
         commandeRepository.save(panier);
 
-        return ResponseEntity.ok("Commande validée avec succès !");
+        // Génération du PDF
+        ByteArrayInputStream pdfStream = PdfGenerator.generateCommandePdf(panier);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "inline; filename=commande_" + panier.getId() + ".pdf");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(new InputStreamResource(pdfStream));
     }
 
 

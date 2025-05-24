@@ -1,6 +1,7 @@
 package com.fastmarket.fastmarket_api.controller;
 
 import com.fastmarket.fastmarket_api.dto.ModifierMagasinClientRequest;
+import com.fastmarket.fastmarket_api.dto.TraiterCommandeRequest;
 import com.fastmarket.fastmarket_api.model.Client;
 import com.fastmarket.fastmarket_api.model.Commande;
 import com.fastmarket.fastmarket_api.model.Magasin;
@@ -37,6 +38,25 @@ public class CommandeController {
                 preparateur.getMagasin().getId(), "Commandé");
 
         return ResponseEntity.ok(commandes);
+    }
+
+    @PutMapping("/traiter")
+    public ResponseEntity<String> traiterCommande(@RequestBody TraiterCommandeRequest req) {
+        Commande commande = commandeRepository.findById(req.getCommandeId())
+                .orElseThrow(() -> new RuntimeException("Commande introuvable"));
+
+        if (!commande.getStatut().equalsIgnoreCase("Commandé")) {
+            return ResponseEntity.badRequest().body("La commande n'est pas au statut 'Commandé'.");
+        }
+
+        Preparateur preparateur = preparateurRepository.findById(req.getPreparateurId())
+                .orElseThrow(() -> new RuntimeException("Préparateur introuvable"));
+
+        commande.setStatut("En cours de traitement");
+        commande.setPreparateur(preparateur);
+        commandeRepository.save(commande);
+
+        return ResponseEntity.ok("Commande marquée comme 'En cours de traitement'.");
     }
 
 

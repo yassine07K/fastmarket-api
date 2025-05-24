@@ -65,4 +65,11 @@ public class ClientController {
         return ResponseEntity.ok("Magasin modifié avec succès pour le client.");
     }
 
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Client> getClientByEmail(@PathVariable String email) {
+        return clientRepository.findByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }

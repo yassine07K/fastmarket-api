@@ -73,4 +73,13 @@ public class ProduitController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/recherche")
+    public ResponseEntity<List<Produit>> rechercherProduits(
+            @RequestParam String motcle,
+            @RequestParam Long magasinId) {
+
+        List<Produit> resultats = produitRepository.rechercherProduitsParMotCleEtMagasin(motcle, magasinId);
+        return ResponseEntity.ok(resultats);
+    }
+
 }

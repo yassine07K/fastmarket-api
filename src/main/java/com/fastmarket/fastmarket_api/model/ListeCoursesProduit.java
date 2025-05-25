@@ -6,18 +6,25 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+
 @Entity
-@Table(name = "Post_it")
+@Table(name = "Liste_Courses_Produit")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostIt {
+public class ListeCoursesProduit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "contenu",columnDefinition = "TEXT")
-    private String contenu;
+    @ManyToOne
+    @JoinColumn(name = "liste_id")
+    private ListeCourses liste;
+
+    @ManyToOne
+    @JoinColumn(name = "produit_id")
+    private Produit produit;
+
 }

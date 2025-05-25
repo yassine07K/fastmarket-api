@@ -39,33 +39,7 @@ public class ListeCoursesController {
     }
 
     //Voir toutes les listes de courses d’un client
-    @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<ListeCoursesDTO>> getListesDuClient(@PathVariable Long clientId) {
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new RuntimeException("Client introuvable"));
 
-        List<ListeCoursesDTO> dtoListes = client.getListesCourses().stream().map(liste -> {
-            List<ProduitInListe> produits = liste.getProduits().stream()
-                    .map(p -> new ProduitInListe(
-                            p.getProduit().getId(),
-                            p.getProduit().getLibelle(),
-                            p.getProduit().getMarque(),
-                            p.getProduit().getPrixUnitaire(),
-                            p.getProduit().getEnPromotion(),
-                            p.getProduit().getImage()
-                    ))
-                    .toList();
-
-            return new ListeCoursesDTO(
-                    liste.getId(),
-                    liste.getNom(),
-                    client.getId(),
-                    produits
-            );
-        }).toList();
-
-        return ResponseEntity.ok(dtoListes);
-    }
 
     // Voir une liste de courses par ID
 

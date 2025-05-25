@@ -34,7 +34,7 @@ public class Gerant {
     private String adresse;
 
     @OneToMany(mappedBy = "gerant")
-    @JsonIgnore // ← si tu veux éviter les cycles JSON dans les réponses API
+    @JsonIgnore
     private List<Magasin> magasins;
 
 }

@@ -17,4 +17,6 @@ public interface ProduitRepository extends JpaRepository<Produit, Long> {
             "LOWER(p.marque) LIKE LOWER(CONCAT('%', :motcle, '%')) OR " +
             "LOWER(p.typePromotion) LIKE LOWER(CONCAT('%', :motcle, '%')) )")
     List<Produit> rechercherProduitsParMotCleEtMagasin(@Param("motcle") String motcle, @Param("magasinId") Long magasinId);
+
+    List<Produit> findByMagasin_Gerant_Id(Long gerantId);
 }

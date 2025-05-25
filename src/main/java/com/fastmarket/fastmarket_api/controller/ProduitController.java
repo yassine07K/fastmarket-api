@@ -82,4 +82,11 @@ public class ProduitController {
         return ResponseEntity.ok(resultats);
     }
 
+    @GetMapping("/gerant/{gerantId}")
+    public ResponseEntity<List<Produit>> getProduitsParGerant(@PathVariable Long gerantId) {
+        List<Produit> produits = produitRepository.findByMagasin_Gerant_Id(gerantId);
+        return ResponseEntity.ok(produits);
+    }
+
+
 }

@@ -25,4 +25,5 @@ public interface CommandeRepository extends JpaRepository<Commande, Long> {
     int countByCreneau_Id(Long creneauId);
 
     List<Commande> findByMagasin_IdAndPreparateur_IdAndStatutIn(Long magasinId, Long preparateurId, List<String> statuts);
+    List<Commande> findByMagasin_IdAndStatutIn(Long magasinId, List<String> statuts);
 }

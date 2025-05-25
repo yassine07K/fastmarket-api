@@ -1,9 +1,9 @@
 package com.fastmarket.fastmarket_api.controller;
 
-import com.fastmarket.fastmarket_api.dto.CreerListeCoursesRequest;
-import com.fastmarket.fastmarket_api.dto.ModifierNomListeRequest;
+import com.fastmarket.fastmarket_api.dto.*;
 import com.fastmarket.fastmarket_api.model.Client;
 import com.fastmarket.fastmarket_api.model.ListeCourses;
+import com.fastmarket.fastmarket_api.model.PostIt;
 import com.fastmarket.fastmarket_api.repository.ClientRepository;
 import com.fastmarket.fastmarket_api.repository.ListeCoursesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ public class ListeCoursesController {
     @Autowired
     private ClientRepository clientRepository;
 
+    // Créer une liste de courses
     @PostMapping("/creer")
     public ResponseEntity<ListeCourses> creerNouvelleListe(@RequestBody CreerListeCoursesRequest req) {
         Client client = clientRepository.findById(req.getClientId())
@@ -37,12 +38,39 @@ public class ListeCoursesController {
         return ResponseEntity.ok(saved);
     }
 
+    //Voir toutes les listes de courses d’un client
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<ListeCourses>> getListesParClient(@PathVariable Long clientId) {
-        List<ListeCourses> listes = listeCoursesRepository.findByClient_Id(clientId);
-        return ResponseEntity.ok(listes);
+    public ResponseEntity<List<ListeCoursesDTO>> getListesDuClient(@PathVariable Long clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new RuntimeException("Client introuvable"));
+
+        List<ListeCoursesDTO> dtoListes = client.getListesCourses().stream().map(liste -> {
+            List<ProduitInListe> produits = liste.getProduits().stream()
+                    .map(p -> new ProduitInListe(
+                            p.getProduit().getId(),
+                            p.getProduit().getLibelle(),
+                            p.getProduit().getMarque(),
+                            p.getProduit().getPrixUnitaire(),
+                            p.getProduit().getEnPromotion(),
+                            p.getProduit().getImage()
+                    ))
+                    .toList();
+
+            return new ListeCoursesDTO(
+                    liste.getId(),
+                    liste.getNom(),
+                    client.getId(),
+                    produits
+            );
+        }).toList();
+
+        return ResponseEntity.ok(dtoListes);
     }
 
+    // Voir une liste de courses par ID
+
+
+    //Modifier le nom d’une liste
     @PutMapping("/{listeId}")
     public ResponseEntity<ListeCourses> modifierNomListe(
             @PathVariable Long listeId,
@@ -56,6 +84,7 @@ public class ListeCoursesController {
         return ResponseEntity.ok(listeCoursesRepository.save(liste));
     }
 
+    // Supprimer une liste de courses
     @DeleteMapping("/{listeId}")
     public ResponseEntity<?> supprimerListe(@PathVariable Long listeId) {
         if (!listeCoursesRepository.existsById(listeId)) {
@@ -63,5 +92,30 @@ public class ListeCoursesController {
         }
         listeCoursesRepository.deleteById(listeId);
         return ResponseEntity.ok().build();
+    }
+
+    // Voir les produits dans une liste
+    @GetMapping("/{listeId}/produits")
+    public ResponseEntity<List<ProduitInListe>> getProduitsDeListe(@PathVariable Long listeId) {
+        Optional<ListeCourses> listeOpt = listeCoursesRepository.findById(listeId);
+
+        if (listeOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ListeCourses liste = listeOpt.get();
+
+        List<ProduitInListe> produitsDto = liste.getProduits().stream()
+                .map(p -> new ProduitInListe(
+                        p.getProduit().getId(),
+                        p.getProduit().getLibelle(),
+                        p.getProduit().getMarque(),
+                        p.getProduit().getPrixUnitaire(),
+                        p.getProduit().getEnPromotion(),
+                        p.getProduit().getImage()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(produitsDto);
     }
 }

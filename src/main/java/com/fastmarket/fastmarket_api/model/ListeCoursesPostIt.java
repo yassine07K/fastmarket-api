@@ -7,17 +7,22 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "Post_it")
+@Table(name = "Liste_Courses_Post_It")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostIt {
+public class ListeCoursesPostIt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "contenu",columnDefinition = "TEXT")
-    private String contenu;
+    @ManyToOne
+    @JoinColumn(name = "liste_id")
+    private ListeCourses liste;
+
+    @ManyToOne
+    @JoinColumn(name = "post_it_id")
+    private PostIt postIt;
 }

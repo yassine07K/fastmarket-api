@@ -71,13 +71,17 @@ public class PanierController {
      */
     @DeleteMapping("/{clientId}/vider")
     public ResponseEntity<?> viderPanier(@PathVariable Long clientId) {
-        Optional<Commande> panier = commandeRepository.findByClient_IdAndStatut(clientId, "Panier");
-        if (panier.isPresent()) {
-            ligneCommandeRepository.deleteAll(panier.get().getLignesCommande());
-            return ResponseEntity.ok().build();
-        } else {
+        Optional<Commande> panierOpt = commandeRepository.findByClient_IdAndStatut(clientId, "Panier");
+
+        if (panierOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        Commande panier = panierOpt.get();
+        panier.getLignesCommande().clear();
+        commandeRepository.save(panier);
+
+        return ResponseEntity.ok().build();
     }
 
     /**

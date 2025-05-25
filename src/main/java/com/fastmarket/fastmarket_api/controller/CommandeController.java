@@ -31,12 +31,17 @@ public class CommandeController {
     private CommandeRepository commandeRepository;
 
     @GetMapping("/preparateur/{preparateurId}/commandes/commandees")
-    public ResponseEntity<List<Commande>> getCommandesCommandeesParMagasin(@PathVariable Long preparateurId) {
+    public ResponseEntity<List<Commande>> getCommandesFiltreesParPreparateur(@PathVariable Long preparateurId) {
         Preparateur preparateur = preparateurRepository.findById(preparateurId)
                 .orElseThrow(() -> new RuntimeException("Préparateur introuvable"));
 
-        List<Commande> commandes = commandeRepository.findByMagasinIdAndStatut(
-                preparateur.getMagasin().getId(), "Commandé");
+        List<String> statuts = List.of("Commandé", "En cours de traitement", "Traité");
+
+        List<Commande> commandes = commandeRepository.findByMagasin_IdAndPreparateur_IdAndStatutIn(
+                preparateur.getMagasin().getId(),
+                preparateur.getId(),
+                statuts
+        );
 
         return ResponseEntity.ok(commandes);
     }

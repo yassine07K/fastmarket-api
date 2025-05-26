@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/clients")
-@CrossOrigin(origins = "*") // autorise les appels depuis React ou Postman
+@CrossOrigin(origins = "*")
 public class ClientController {
 
     @Autowired

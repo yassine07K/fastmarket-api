@@ -35,6 +35,6 @@ public class UtilisateurController {
                     .build();
         }
 
-        return ResponseEntity.ok(optUser.get()); // Renvoie tout l'objet utilisateur
+        return ResponseEntity.ok(optUser.get());
     }
 }

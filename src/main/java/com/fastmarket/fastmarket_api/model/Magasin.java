@@ -31,7 +31,7 @@ public class Magasin {
 
     @ManyToMany
     @JoinTable(
-            name = "creneau_mag", // ✅ vrai nom de la table de jointure
+            name = "creneau_mag",
             joinColumns = @JoinColumn(name = "magasin_id"),
             inverseJoinColumns = @JoinColumn(name = "creneau_id")
     )

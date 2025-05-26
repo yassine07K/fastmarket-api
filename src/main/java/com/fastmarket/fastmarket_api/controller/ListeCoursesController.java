@@ -3,7 +3,6 @@ package com.fastmarket.fastmarket_api.controller;
 import com.fastmarket.fastmarket_api.dto.*;
 import com.fastmarket.fastmarket_api.model.Client;
 import com.fastmarket.fastmarket_api.model.ListeCourses;
-import com.fastmarket.fastmarket_api.model.PostIt;
 import com.fastmarket.fastmarket_api.repository.ClientRepository;
 import com.fastmarket.fastmarket_api.repository.ListeCoursesRepository;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -25,7 +25,7 @@ public class Categorie {
     private String nom;
 
     @OneToMany(mappedBy = "categorie")
-    @JsonIgnore // éviter les boucles infinies JSON
+    @JsonIgnore
     private List<Produit> produits;
 
 }

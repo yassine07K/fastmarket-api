@@ -38,9 +38,9 @@ public class Client {
     @JsonIgnore
     private List<Commande> commandes;
 
-    @OneToMany(mappedBy = "client")
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<ListeCourses> courses;
+    private List<ListeCourses> listesCourses;
 
     @ManyToOne
     @JoinColumn(name = "magasin_id")

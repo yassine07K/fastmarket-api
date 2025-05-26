@@ -3,6 +3,7 @@ package com.fastmarket.fastmarket_api.controller;
 import com.fastmarket.fastmarket_api.dto.*;
 import com.fastmarket.fastmarket_api.model.Client;
 import com.fastmarket.fastmarket_api.model.ListeCourses;
+import com.fastmarket.fastmarket_api.model.PostIt;
 import com.fastmarket.fastmarket_api.repository.ClientRepository;
 import com.fastmarket.fastmarket_api.repository.ListeCoursesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,38 @@ public class ListeCoursesController {
 
 
     // Voir une liste de courses par ID
+    @GetMapping("/{listeId}/details")
+    public ResponseEntity<ListeCoursesDetails> getDetailsListeCourses(@PathVariable Long listeId) {
+        Optional<ListeCourses> listeOpt = listeCoursesRepository.findById(listeId);
+
+        if (listeOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ListeCourses liste = listeOpt.get();
+
+        List<ProduitInListe> produits = liste.getProduits().stream()
+                .map(lp -> new ProduitInListe(
+                        lp.getProduit().getId(),
+                        lp.getProduit().getLibelle(),
+                        lp.getProduit().getMarque(),
+                        lp.getProduit().getPrixUnitaire(),
+                        lp.getProduit().getEnPromotion(),
+                        lp.getProduit().getImage()
+                ))
+                .toList();
+
+        List<PostIt> postIts = liste.getPostIts(); // s'il est bien mappé
+
+        ListeCoursesDetails dto = new ListeCoursesDetails(
+                liste.getId(),
+                liste.getNom(),
+                produits,
+                postIts
+        );
+
+        return ResponseEntity.ok(dto);
+    }
 
 
     //Modifier le nom d’une liste

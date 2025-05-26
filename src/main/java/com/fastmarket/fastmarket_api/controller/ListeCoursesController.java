@@ -38,6 +38,22 @@ public class ListeCoursesController {
     }
 
     //Voir toutes les listes de courses d’un client
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<List<ListeCoursesResume>> getListesDuClient(@PathVariable Long clientId) {
+        Optional<Client> clientOpt = clientRepository.findById(clientId);
+
+        if (clientOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Client client = clientOpt.get();
+
+        List<ListeCoursesResume> listes = client.getListesCourses().stream()
+                .map(l -> new ListeCoursesResume(l.getId(), l.getNom()))
+                .toList();
+
+        return ResponseEntity.ok(listes);
+    }
 
 
     // Voir une liste de courses par ID

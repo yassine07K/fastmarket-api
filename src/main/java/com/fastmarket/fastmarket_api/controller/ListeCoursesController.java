@@ -205,4 +205,28 @@ public class ListeCoursesController {
         listeCoursesRepository.save(liste);
         return ResponseEntity.ok("Produit supprimé de la liste");
     }
+
+    @PutMapping("/{listeId}/postits/{postItId}")
+    public ResponseEntity<?> modifierPostItDeListe(
+            @PathVariable Long listeId,
+            @PathVariable Long postItId,
+            @RequestBody ModifierPostItRequest req) {
+
+        ListeCourses liste = listeCoursesRepository.findById(listeId)
+                .orElseThrow(() -> new RuntimeException("Liste de courses introuvable"));
+
+        // Vérifie que le Post-It appartient à la liste
+        PostIt postIt = postItRepository.findById(postItId)
+                .orElseThrow(() -> new RuntimeException("Post-It introuvable"));
+
+        if (!liste.getPostIts().contains(postIt)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Ce post-it n'appartient pas à cette liste");
+        }
+
+        // Modification du contenu
+        postIt.setContenu(req.getContenu());
+        postItRepository.save(postIt);
+
+        return ResponseEntity.ok("Post-It modifié avec succès");
+    }
 }

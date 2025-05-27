@@ -1,11 +1,11 @@
 package com.fastmarket.fastmarket_api.controller;
 
 import com.fastmarket.fastmarket_api.dto.*;
-import com.fastmarket.fastmarket_api.model.Client;
-import com.fastmarket.fastmarket_api.model.ListeCourses;
-import com.fastmarket.fastmarket_api.model.PostIt;
+import com.fastmarket.fastmarket_api.model.*;
 import com.fastmarket.fastmarket_api.repository.ClientRepository;
 import com.fastmarket.fastmarket_api.repository.ListeCoursesRepository;
+import com.fastmarket.fastmarket_api.repository.PostItRepository;
+import com.fastmarket.fastmarket_api.repository.ProduitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +23,12 @@ public class ListeCoursesController {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private ProduitRepository produitRepository;
+
+    @Autowired
+    private PostItRepository postItRepository;
 
     // Créer une liste de courses
     @PostMapping("/creer")
@@ -116,28 +122,39 @@ public class ListeCoursesController {
         return ResponseEntity.ok().build();
     }
 
-    // Voir les produits dans une liste
-    @GetMapping("/{listeId}/produits")
-    public ResponseEntity<List<ProduitInListe>> getProduitsDeListe(@PathVariable Long listeId) {
-        Optional<ListeCourses> listeOpt = listeCoursesRepository.findById(listeId);
+    // Ajouter un produit à une liste de courses
+    @PostMapping("/produits/ajouter")
+    public ResponseEntity<?> ajouterProduitAListe(@RequestBody AjouterProduitListeRequest req) {
+        ListeCourses liste = listeCoursesRepository.findById(req.getListeId())
+                .orElseThrow(() -> new RuntimeException("Liste introuvable"));
 
-        if (listeOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+        Produit produit = produitRepository.findById(req.getProduitId())
+                .orElseThrow(() -> new RuntimeException("Produit introuvable"));
 
-        ListeCourses liste = listeOpt.get();
+        ListeCoursesProduit lien = new ListeCoursesProduit();
+        lien.setListe(liste);
+        lien.setProduit(produit);
 
-        List<ProduitInListe> produitsDto = liste.getProduits().stream()
-                .map(p -> new ProduitInListe(
-                        p.getProduit().getId(),
-                        p.getProduit().getLibelle(),
-                        p.getProduit().getMarque(),
-                        p.getProduit().getPrixUnitaire(),
-                        p.getProduit().getEnPromotion(),
-                        p.getProduit().getImage()
-                ))
-                .toList();
+        liste.getProduits().add(lien);
+        listeCoursesRepository.save(liste);
 
-        return ResponseEntity.ok(produitsDto);
+        return ResponseEntity.ok().build();
+    }
+
+    // Ajouter un Post-It à une liste de courses
+    @PostMapping("/postits/ajouter")
+    public ResponseEntity<?> ajouterPostItAListe(@RequestBody AjouterPostItListeRequest req) {
+        ListeCourses liste = listeCoursesRepository.findById(req.getListeId())
+                .orElseThrow(() -> new RuntimeException("Liste introuvable"));
+
+        PostIt postIt = new PostIt();
+        postIt.setContenu(req.getContenu());
+
+        postIt = postItRepository.save(postIt);
+
+        liste.getPostIts().add(postIt);
+        listeCoursesRepository.save(liste);
+
+        return ResponseEntity.ok().build();
     }
 }

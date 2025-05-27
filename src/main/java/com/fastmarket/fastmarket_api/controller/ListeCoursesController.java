@@ -123,9 +123,9 @@ public class ListeCoursesController {
     }
 
     // Ajouter un produit à une liste de courses
-    @PostMapping("/produits/ajouter")
-    public ResponseEntity<?> ajouterProduitAListe(@RequestBody AjouterProduitListeRequest req) {
-        ListeCourses liste = listeCoursesRepository.findById(req.getListeId())
+    @PostMapping("/{listeId}/produits")
+    public ResponseEntity<?> ajouterProduitAListe(@PathVariable Long listeId, @RequestBody AjouterProduitListeRequest req) {
+        ListeCourses liste = listeCoursesRepository.findById(listeId)
                 .orElseThrow(() -> new RuntimeException("Liste introuvable"));
 
         Produit produit = produitRepository.findById(req.getProduitId())
@@ -142,9 +142,9 @@ public class ListeCoursesController {
     }
 
     // Ajouter un Post-It à une liste de courses
-    @PostMapping("/postits/ajouter")
-    public ResponseEntity<?> ajouterPostItAListe(@RequestBody AjouterPostItListeRequest req) {
-        ListeCourses liste = listeCoursesRepository.findById(req.getListeId())
+    @PostMapping("/{listeId}/postits")
+    public ResponseEntity<?> ajouterPostItAListe(@PathVariable Long listeId, @RequestBody AjouterPostItListeRequest req) {
+        ListeCourses liste = listeCoursesRepository.findById(listeId)
                 .orElseThrow(() -> new RuntimeException("Liste introuvable"));
 
         PostIt postIt = new PostIt();

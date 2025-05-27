@@ -4,6 +4,7 @@ import com.fastmarket.fastmarket_api.dto.*;
 import com.fastmarket.fastmarket_api.model.*;
 import com.fastmarket.fastmarket_api.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -124,13 +125,26 @@ public class ListeCoursesController {
 
     // Ajouter un produit à une liste de courses
     @PostMapping("/{listeId}/produits")
-    public ResponseEntity<?> ajouterProduitAListe(@PathVariable Long listeId, @RequestBody AjouterProduitListeRequest req) {
+    public ResponseEntity<?> ajouterProduitAListe(
+            @PathVariable Long listeId,
+            @RequestBody AjouterProduitListeRequest req) {
+
         ListeCourses liste = listeCoursesRepository.findById(listeId)
                 .orElseThrow(() -> new RuntimeException("Liste introuvable"));
 
         Produit produit = produitRepository.findById(req.getProduitId())
                 .orElseThrow(() -> new RuntimeException("Produit introuvable"));
 
+        // Vérifie si le produit est déjà dans la liste
+        boolean existeDeja = liste.getProduits().stream()
+                .anyMatch(lien -> lien.getProduit().getId().equals(produit.getId()));
+
+        if (existeDeja) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Le produit est déjà présent dans la liste.");
+        }
+
+        // Ajout du produit
         ListeCoursesProduit lien = new ListeCoursesProduit();
         lien.setListe(liste);
         lien.setProduit(produit);

@@ -2,10 +2,7 @@ package com.fastmarket.fastmarket_api.controller;
 
 import com.fastmarket.fastmarket_api.dto.*;
 import com.fastmarket.fastmarket_api.model.*;
-import com.fastmarket.fastmarket_api.repository.ClientRepository;
-import com.fastmarket.fastmarket_api.repository.ListeCoursesRepository;
-import com.fastmarket.fastmarket_api.repository.PostItRepository;
-import com.fastmarket.fastmarket_api.repository.ProduitRepository;
+import com.fastmarket.fastmarket_api.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +26,9 @@ public class ListeCoursesController {
 
     @Autowired
     private PostItRepository postItRepository;
+
+    @Autowired
+    private ListeCoursesPostItRepository listeCoursesPostItRepository;
 
     // Créer une liste de courses
     @PostMapping("/creer")
@@ -156,5 +156,39 @@ public class ListeCoursesController {
         listeCoursesRepository.save(liste);
 
         return ResponseEntity.ok().build();
+    }
+
+    // Supprimer un Post-It d'une liste de courses
+    @DeleteMapping("/{listeId}/postits/{postItId}")
+    public ResponseEntity<?> supprimerPostItDeListe(@PathVariable Long listeId, @PathVariable Long postItId) {
+        ListeCourses liste = listeCoursesRepository.findById(listeId)
+                .orElseThrow(() -> new RuntimeException("Liste introuvable"));
+
+        PostIt postIt = postItRepository.findById(postItId)
+                .orElseThrow(() -> new RuntimeException("Post-it introuvable"));
+
+        liste.getPostIts().removeIf(p -> p.getId().equals(postItId)); // délie l'association
+        listeCoursesRepository.save(liste); // met à jour la liste
+
+        postItRepository.delete(postIt); // supprime le post-it lui-même (optionnel)
+
+        return ResponseEntity.ok().build();
+    }
+
+    // Supprimer un produit d'une liste de courses
+    @DeleteMapping("/{listeId}/produits/{produitId}")
+    public ResponseEntity<String> supprimerProduitDeListe(@PathVariable Long listeId, @PathVariable Long produitId) {
+        Optional<ListeCourses> listeOpt = listeCoursesRepository.findById(listeId);
+
+        if (listeOpt.isEmpty()) return ResponseEntity.notFound().build();
+
+        ListeCourses liste = listeOpt.get();
+
+        boolean removed = liste.getProduits().removeIf(lp -> lp.getProduit().getId().equals(produitId));
+
+        if (!removed) return ResponseEntity.status(404).body("Produit non trouvé dans la liste");
+
+        listeCoursesRepository.save(liste);
+        return ResponseEntity.ok("Produit supprimé de la liste");
     }
 }

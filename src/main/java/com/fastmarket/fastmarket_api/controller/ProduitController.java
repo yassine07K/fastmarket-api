@@ -1,12 +1,16 @@
 package com.fastmarket.fastmarket_api.controller;
 
+import com.fastmarket.fastmarket_api.dto.ProduitInListe;
 import com.fastmarket.fastmarket_api.model.Produit;
+import com.fastmarket.fastmarket_api.model.ProduitRecommande;
+import com.fastmarket.fastmarket_api.repository.ProduitRecommandeRepository;
 import com.fastmarket.fastmarket_api.repository.ProduitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/produits")
@@ -15,6 +19,9 @@ public class ProduitController {
 
     @Autowired
     private ProduitRepository produitRepository;
+
+    @Autowired
+    private ProduitRecommandeRepository produitRecommandeRepository;
 
     // Récupérer tous les produits
     @GetMapping
@@ -86,6 +93,27 @@ public class ProduitController {
     public ResponseEntity<List<Produit>> getProduitsParGerant(@PathVariable Long gerantId) {
         List<Produit> produits = produitRepository.findByMagasin_Gerant_Id(gerantId);
         return ResponseEntity.ok(produits);
+    }
+
+    @GetMapping("/{produitId}/recommandes")
+    public ResponseEntity<List<ProduitInListe>> getProduitsRecommandes(@PathVariable Long produitId) {
+        List<ProduitRecommande> relations = produitRecommandeRepository.findByProduit_Id(produitId);
+
+        List<ProduitInListe> produitsDto = relations.stream()
+                .map(rel -> {
+                    Produit p = rel.getProduitRecommande();
+                    return new ProduitInListe(
+                            p.getId(),
+                            p.getLibelle(),
+                            p.getMarque(),
+                            p.getPrixUnitaire(),
+                            p.getEnPromotion(),
+                            p.getImage()
+                    );
+                })
+                .toList();
+
+        return ResponseEntity.ok(produitsDto);
     }
 
 

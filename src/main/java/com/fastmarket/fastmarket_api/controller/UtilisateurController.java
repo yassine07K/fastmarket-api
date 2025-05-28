@@ -23,6 +23,7 @@ public class UtilisateurController {
         return utilisateurRepository.findAll();
     }
 
+    // Vérifier si un utilisateur existe déjà par email
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Utilisateur request) {
         Optional<Utilisateur> optUser = utilisateurRepository.findByEmailAndMotDePasse(

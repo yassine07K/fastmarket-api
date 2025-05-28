@@ -18,6 +18,7 @@ public class PreparateurController {
     @Autowired
     private PreparateurRepository preparateurRepository;
 
+    // Récupérer un préparateur par son email
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getPreparateurByEmail(@PathVariable String email) {
         return preparateurRepository.findByEmail(email)

@@ -26,6 +26,7 @@ public class GerantController {
     @Autowired
     private MagasinRepository magasinRepository;
 
+    // Récupérer un gérant par son mail
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getGerantByEmail(@PathVariable String email) {
         return gerantRepository.findByEmail(email)
@@ -33,6 +34,7 @@ public class GerantController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    // Récupérer le magasin d'un gérant par l'ID du gérant
     @GetMapping("/{gerantId}/magasin")
     public ResponseEntity<Magasin> getMagasinByGerant(@PathVariable Long gerantId) {
         Optional<Gerant> gerantOpt = gerantRepository.findById(gerantId);

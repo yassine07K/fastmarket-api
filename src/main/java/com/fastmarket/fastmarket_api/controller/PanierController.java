@@ -42,9 +42,7 @@ public class PanierController {
     private CreneauRepository creneauRepository;
 
 
-    /**
-     * Visualiser le panier actif d’un client
-     */
+    // Visualiser le panier d’un client par son ID
     @GetMapping("/{clientId}")
     public ResponseEntity<Commande> getPanierClient(@PathVariable Long clientId) {
         Optional<Commande> panier = commandeRepository.findByClient_IdAndStatut(clientId, "Panier");
@@ -52,9 +50,7 @@ public class PanierController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    /**
-     * Supprimer une ligne du panier (par ID ligneCommande)
-     */
+   // Supprimer une ligne de commande du panier
     @DeleteMapping("/ligne/{ligneId}")
     public ResponseEntity<?> supprimerLigneDuPanier(@PathVariable Long ligneId) {
         Optional<LigneCommande> ligne = ligneCommandeRepository.findById(ligneId);
@@ -66,9 +62,7 @@ public class PanierController {
         }
     }
 
-    /**
-     * Vider entièrement le panier d’un client
-     */
+    //
     @DeleteMapping("/{clientId}/vider")
     public ResponseEntity<?> viderPanier(@PathVariable Long clientId) {
         Optional<Commande> panierOpt = commandeRepository.findByClient_IdAndStatut(clientId, "Panier");

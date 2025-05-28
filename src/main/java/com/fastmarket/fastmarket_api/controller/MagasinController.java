@@ -16,16 +16,19 @@ public class MagasinController {
     @Autowired
     private MagasinRepository magasinRepository;
 
+    // Récupérer tous les magasins
     @GetMapping
     public List<Magasin> getAllMagasins() {
         return magasinRepository.findAll();
     }
 
+    // Récupérer 5 magasins
     @GetMapping("/top5")
     public List<Magasin> getTop5Magasins() {
         return magasinRepository.findTop5ByOrderByIdAsc();
     }
 
+    // Récupérer les magasins par id
     @GetMapping("/{id}")
     public ResponseEntity<Magasin> getMagasinById(@PathVariable Long id) {
         return magasinRepository.findById(id)

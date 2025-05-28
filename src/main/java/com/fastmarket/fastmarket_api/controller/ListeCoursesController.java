@@ -64,7 +64,7 @@ public class ListeCoursesController {
     }
 
 
-    // Voir une liste de courses par ID
+    // Récupérer une liste de courses par ID
     @GetMapping("/{listeId}/details")
     public ResponseEntity<ListeCoursesDetails> getDetailsListeCourses(@PathVariable Long listeId) {
         Optional<ListeCourses> listeOpt = listeCoursesRepository.findById(listeId);
@@ -181,10 +181,10 @@ public class ListeCoursesController {
         PostIt postIt = postItRepository.findById(postItId)
                 .orElseThrow(() -> new RuntimeException("Post-it introuvable"));
 
-        liste.getPostIts().removeIf(p -> p.getId().equals(postItId)); // délie l'association
-        listeCoursesRepository.save(liste); // met à jour la liste
+        liste.getPostIts().removeIf(p -> p.getId().equals(postItId));
+        listeCoursesRepository.save(liste);
 
-        postItRepository.delete(postIt); // supprime le post-it lui-même (optionnel)
+        postItRepository.delete(postIt);
 
         return ResponseEntity.ok().build();
     }
@@ -206,6 +206,7 @@ public class ListeCoursesController {
         return ResponseEntity.ok("Produit supprimé de la liste");
     }
 
+    // Modifier le contenu d'un Post-It dans une liste de courses
     @PutMapping("/{listeId}/postits/{postItId}")
     public ResponseEntity<?> modifierPostItDeListe(
             @PathVariable Long listeId,

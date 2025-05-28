@@ -24,6 +24,7 @@ public class CommandeController {
     @Autowired
     private CommandeRepository commandeRepository;
 
+    // Récupérer toutes les commandes d'un préparateur
     @GetMapping("/magasin/{magasinId}/commandes/commandees")
     public ResponseEntity<List<Commande>> getCommandesFiltreesParMagasin(@PathVariable Long magasinId) {
         List<String> statuts = List.of("Commandé", "En cours de traitement", "Traité");
@@ -33,6 +34,7 @@ public class CommandeController {
         return ResponseEntity.ok(commandes);
     }
 
+    // Passer une commande au statut "En cours de traitement"
     @PutMapping("/traiter")
     public ResponseEntity<String> traiterCommande(@RequestBody TraiterCommandeRequest req) {
         Commande commande = commandeRepository.findById(req.getCommandeId())
@@ -52,6 +54,7 @@ public class CommandeController {
         return ResponseEntity.ok("Commande marquée comme 'En cours de traitement'.");
     }
 
+    // Marquer une commande comme "Traité"
     @PutMapping("/marquerTraitee")
     public ResponseEntity<String> marquerCommandeCommeTraitee(@RequestBody StatutCommandeRequest req) {
         Commande commande = commandeRepository.findById(req.getCommandeId())

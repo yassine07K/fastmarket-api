@@ -80,6 +80,7 @@ public class ProduitController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // Rechercher des produits par mot-clé et magasin
     @GetMapping("/recherche")
     public ResponseEntity<List<Produit>> rechercherProduits(
             @RequestParam String motcle,
@@ -89,12 +90,14 @@ public class ProduitController {
         return ResponseEntity.ok(resultats);
     }
 
+    // Récupérer les produits d'un gérant
     @GetMapping("/gerant/{gerantId}")
     public ResponseEntity<List<Produit>> getProduitsParGerant(@PathVariable Long gerantId) {
         List<Produit> produits = produitRepository.findByMagasin_Gerant_Id(gerantId);
         return ResponseEntity.ok(produits);
     }
 
+    //
     @GetMapping("/{produitId}/recommandes")
     public ResponseEntity<List<ProduitInListe>> getProduitsRecommandes(@PathVariable Long produitId) {
         List<ProduitRecommande> relations = produitRecommandeRepository.findByProduit_Id(produitId);

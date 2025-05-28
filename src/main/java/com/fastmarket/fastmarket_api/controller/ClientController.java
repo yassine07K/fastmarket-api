@@ -24,7 +24,7 @@ public class ClientController {
     @Autowired
     private MagasinRepository magasinRepository;
 
-    // GET /clients
+    // Récupérer tous les clients
     @GetMapping
     public List<Client> getAllClients() {
         return clientRepository.findAll();
@@ -36,12 +36,13 @@ public class ClientController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    // POST /clients
+    // créer un client
     @PostMapping
     public Client createClient(@RequestBody Client client) {
         return clientRepository.save(client);
     }
 
+    // Vérifier si un client existe déjà par email
     @PostMapping("/login")
     public ResponseEntity<Client> login(@RequestBody Client client) {
         return clientRepository.findByEmailAndMotDePasse(
@@ -51,6 +52,7 @@ public class ClientController {
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
+    // Mettre à jour le magsin d'un client
     @PutMapping("/modifierMagasin")
     public ResponseEntity<String> modifierMagasinClient(@RequestBody ModifierMagasinClientRequest req) {
         Client client = clientRepository.findById(req.getClientId())
@@ -65,6 +67,7 @@ public class ClientController {
         return ResponseEntity.ok("Magasin modifié avec succès pour le client.");
     }
 
+    // Récupérer un client par email
     @GetMapping("/email/{email}")
     public ResponseEntity<Client> getClientByEmail(@PathVariable String email) {
         return clientRepository.findByEmail(email)

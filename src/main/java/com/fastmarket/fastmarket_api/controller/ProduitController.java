@@ -1,16 +1,26 @@
 package com.fastmarket.fastmarket_api.controller;
 
 import com.fastmarket.fastmarket_api.dto.ProduitInListe;
+import com.fastmarket.fastmarket_api.model.Categorie;
+import com.fastmarket.fastmarket_api.model.Magasin;
 import com.fastmarket.fastmarket_api.model.Produit;
 import com.fastmarket.fastmarket_api.model.ProduitRecommande;
+import com.fastmarket.fastmarket_api.repository.CategorieRepository;
+import com.fastmarket.fastmarket_api.repository.MagasinRepository;
 import com.fastmarket.fastmarket_api.repository.ProduitRecommandeRepository;
 import com.fastmarket.fastmarket_api.repository.ProduitRepository;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/produits")
@@ -22,6 +32,12 @@ public class ProduitController {
 
     @Autowired
     private ProduitRecommandeRepository produitRecommandeRepository;
+
+    @Autowired
+    private MagasinRepository magasinRepository;
+
+    @Autowired
+    private CategorieRepository categorieRepository;
 
     // Récupérer tous les produits
     @GetMapping
@@ -114,6 +130,59 @@ public class ProduitController {
                 .toList();
 
         return ResponseEntity.ok(produitsDto);
+    }
+
+    @PostMapping("/importer/{gerantId}")
+    public ResponseEntity<String> importerProduits(@RequestParam("file") MultipartFile file, @PathVariable Long gerantId) {
+        try {
+            // Étape 1 : Récupération du magasin du gérant
+            Magasin magasin = (Magasin) magasinRepository.findByGerant_Id(gerantId)
+                    .orElseThrow(() -> new RuntimeException("Magasin non trouvé pour ce gérant"));
+
+            // Étape 2 : Lecture du fichier
+            BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
+            CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim());
+            List<CSVRecord> records = parser.getRecords();
+
+            for (CSVRecord record : records) {
+                String libelle = record.get("libelle");
+
+                // Vérifie si le produit existe déjà dans ce magasin
+                boolean exists = produitRepository.findByLibelleAndMagasin_Id(libelle, magasin.getId()).isPresent();
+                if (exists) continue;
+
+                // Création du produit
+                Produit produit = new Produit();
+                produit.setLibelle(libelle);
+                produit.setPrixUnitaire(Double.parseDouble(record.get("prix_unitaire")));
+                produit.setPrixKg(Double.parseDouble(record.get("prix_kg")));
+                produit.setNutriscore(record.get("nutriscore"));
+                produit.setPoids(Double.parseDouble(record.get("poids")));
+                produit.setEnPromotion(Boolean.parseBoolean(record.get("en_promotion")));
+                produit.setTypePromotion(record.get("type_promotion"));
+                produit.setImage(record.get("image"));
+                produit.setMarque(record.get("marque"));
+                produit.setDescription(record.get("description"));
+                produit.setMagasin(magasin);
+
+                // Gestion de la catégorie
+                String categorieNom = record.get("categorie");
+                Categorie categorie = categorieRepository.findByNomIgnoreCase(categorieNom)
+                        .orElseGet(() -> {
+                            Categorie nouvelle = new Categorie();
+                            nouvelle.setNom(categorieNom);
+                            return categorieRepository.save(nouvelle);
+                        });
+                produit.setCategorie(categorie);
+
+                // Sauvegarde du produit
+                produitRepository.save(produit);
+            }
+
+            return ResponseEntity.ok("Produits importés avec succès (" + records.size() + " lignes)");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Erreur lors de l'import : " + e.getMessage());
+        }
     }
 
 

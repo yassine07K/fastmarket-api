@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProduitRepository extends JpaRepository<Produit, Long> {
     List<Produit> findByCategorieId(Long id);
@@ -19,4 +20,6 @@ public interface ProduitRepository extends JpaRepository<Produit, Long> {
     List<Produit> rechercherProduitsParMotCleEtMagasin(@Param("motcle") String motcle, @Param("magasinId") Long magasinId);
 
     List<Produit> findByMagasin_Gerant_Id(Long gerantId);
+
+    Optional<Produit> findByLibelleAndMagasin_Id(String libelle, Long id);
 }
